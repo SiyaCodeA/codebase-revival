@@ -1,3 +1,3 @@
 [{"capability":"code","source":"zip","outcome":"migrate","status":"done","next_action":"none"},
 {"capability":"database/auth/records","source":"none detected","outcome":"n/a","status":"verified","next_action":"none"},
-{"capability":"Lovable AI email generator","source":"LOVABLE_API_KEY","outcome":"preserve","status":"pending","next_action":"verify key present"}]
+{"capability":"Lovable AI email generator","source":"LOVABLE_API_KEY","outcome":"preserve","status":"verified","next_action":"none"}]
