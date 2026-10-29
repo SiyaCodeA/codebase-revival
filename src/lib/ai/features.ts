@@ -12,6 +12,8 @@ import { planTasksFn } from "./tasks.functions";
 import { formatTaskPlan } from "./tasks.schema";
 import { researchFn } from "./research.functions";
 import { formatResearchBrief } from "./research.schema";
+import { chatFn } from "./chat.functions";
+import type { ChatMessage } from "./chat.schema";
 
 export type EmailInput = EmailRequest;
 export type MeetingInput = { title: string; notes: string };
@@ -46,5 +48,11 @@ export async function researchTopic(input: ResearchInput): Promise<AIResult> {
   const res = await researchFn({ data: { question: input.question, depth: input.depth === "Detailed briefing" ? "Detailed briefing" : "Quick overview" } });
   if (!res.ok) throw new Error(res.error);
   return { text: formatResearchBrief(input.question, res.brief) };
+}
+/** AI Chat — live, multi-turn; the full conversation is sent as context. Not persisted. */
+export async function sendChat(messages: ChatMessage[]): Promise<string> {
+  const res = await chatFn({ data: { messages } });
+  if (!res.ok) throw new Error(res.error);
+  return res.reply;
 }
 void notConnected;

@@ -1,6 +1,7 @@
-import { LayoutDashboard, Mail, NotebookPen, ListChecks, Search, Settings } from "lucide-react";
+import { LayoutDashboard, Mail, NotebookPen, ListChecks, Search, Settings, MessageSquare } from "lucide-react";
 
 export const featureNav = [
+  { title: "AI Chat", url: "/chat", icon: MessageSquare, description: "Have a conversation with the assistant." },
   { title: "Smart Email Generator", url: "/email", icon: Mail, description: "Draft clear, well-toned emails from a few notes." },
   { title: "Meeting Notes Summarizer", url: "/meetings", icon: NotebookPen, description: "Turn raw notes into decisions and action items." },
   { title: "AI Task Planner", url: "/tasks", icon: ListChecks, description: "Break a goal into a prioritised, scheduled plan." },
