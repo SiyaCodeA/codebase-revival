@@ -1,4 +1,6 @@
-# Meeting Notes Summarizer
-- [x] Connect existing meeting form to the existing AI integration.
-- [x] Add grounded sections, validation, Clear and Copy without redesigning other tools.
-- [x] Test the real meeting flow and email regression; report setup and testing instructions.
+# Workday Copilot
+- [x] Meeting Notes Summarizer connected and tested.
+- [x] Tasks: connect AI planner (grounded, Clear/Copy).
+- [x] Research: connect AI (clearly labelled no web search, Clear/Copy).
+- [ ] Task list (create/edit/complete/delete) — not part of current page design; needs user decision.
+- [ ] Web-sourced research with citations — needs a search service connected.
