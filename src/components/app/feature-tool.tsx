@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import { AlertCircle, Loader2, Sparkles } from "lucide-react";
+import { AlertCircle, Check, Copy, Eraser, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ type Status = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message:
 
 /** Shared shell for each AI tool: form on the left, output panel on the right. */
 export function FeatureTool<T>({
-  title, description, submitLabel, children, collect, validate, run,
+  title, description, submitLabel, children, collect, validate, run, actions = false,
 }: {
   title: string;
   description: string;
@@ -21,8 +21,11 @@ export function FeatureTool<T>({
   collect: (form: FormData) => T;
   validate: (input: T) => string | null;
   run: (input: T) => Promise<AIResult>;
+  /** Opt-in Clear and Copy buttons. */
+  actions?: boolean;
 }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [copied, setCopied] = useState(false);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -38,6 +41,16 @@ export function FeatureTool<T>({
     }
   }
 
+  async function onCopy(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setStatus({ kind: "error", message: "Couldn't copy to the clipboard. Please select the text and copy it manually." });
+    }
+  }
+
   const loading = status.kind === "loading";
 
   return (
@@ -45,15 +58,30 @@ export function FeatureTool<T>({
       <PageHeader title={title} description={description} />
       <ResponsibleAINotice compact />
       <div className="grid gap-6 lg:grid-cols-2">
-        <form onSubmit={onSubmit} noValidate className="space-y-5 rounded-xl border bg-card p-5 shadow-card md:p-6" aria-busy={loading}>
+        <form onSubmit={onSubmit} onReset={() => setStatus({ kind: "idle" })} noValidate className="space-y-5 rounded-xl border bg-card p-5 shadow-card md:p-6" aria-busy={loading}>
           {children}
-          <Button type="submit" disabled={loading} className="w-full sm:w-auto">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Sparkles className="h-4 w-4" aria-hidden />}
-            {loading ? "Working…" : submitLabel}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Sparkles className="h-4 w-4" aria-hidden />}
+              {loading ? "Working…" : submitLabel}
+            </Button>
+            {actions && (
+              <Button type="reset" variant="outline" disabled={loading} className="w-full sm:w-auto">
+                <Eraser className="h-4 w-4" aria-hidden /> Clear
+              </Button>
+            )}
+          </div>
         </form>
         <section aria-labelledby="output-heading" className="rounded-xl border bg-card p-5 shadow-card md:p-6">
-          <h2 id="output-heading" className="mb-3 text-lg font-semibold">Output</h2>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 id="output-heading" className="text-lg font-semibold">Output</h2>
+            {actions && status.kind === "done" && (
+              <Button type="button" variant="outline" size="sm" onClick={() => onCopy(status.text)}>
+                {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
+                {copied ? "Copied" : "Copy"}
+              </Button>
+            )}
+          </div>
           <div aria-live="polite">
             {status.kind === "idle" && (
               <p className="text-sm text-muted-foreground">Fill in the form and submit. Results will appear here for you to review.</p>
