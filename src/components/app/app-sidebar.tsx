@@ -31,8 +31,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link to="/" className="flex items-center gap-2 px-2 py-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+        <Link to="/" className="flex items-center gap-2 px-2 py-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
             <Sparkles className="h-4 w-4" aria-hidden />
           </span>
           <span className="font-display text-base font-semibold leading-tight group-data-[collapsible=icon]:hidden">
