@@ -20,6 +20,7 @@ export const Route = createFileRoute("/meetings")({
       validate={(i) => (i.notes.length < 20 ? "Please paste at least a few sentences of meeting notes." : null)}
       run={summarizeMeeting}
       actions
+      regenerate
     >
       <TextField id="title" label="Meeting title" placeholder="e.g. Weekly product sync" />
       <AreaField id="notes" label="Notes or transcript (required)" rows={10} hint="Avoid pasting confidential information you're not permitted to share." />

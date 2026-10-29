@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import { AlertCircle, Check, Copy, Eraser, Loader2, Sparkles } from "lucide-react";
+import { AlertCircle, Check, Copy, Eraser, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ type Status = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message:
 
 /** Shared shell for each AI tool: form on the left, output panel on the right. */
 export function FeatureTool<T>({
-  title, description, submitLabel, children, collect, validate, run, actions = false,
+  title, description, submitLabel, children, collect, validate, run, actions = false, regenerate = false,
 }: {
   title: string;
   description: string;
@@ -23,15 +23,22 @@ export function FeatureTool<T>({
   run: (input: T) => Promise<AIResult>;
   /** Opt-in Clear and Copy buttons. */
   actions?: boolean;
+  /** Opt-in Regenerate button: re-runs with the last submitted input. */
+  regenerate?: boolean;
 }) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [copied, setCopied] = useState(false);
+  const [lastInput, setLastInput] = useState<T | null>(null);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const input = collect(new FormData(e.currentTarget));
+    await execute(collect(new FormData(e.currentTarget)));
+  }
+
+  async function execute(input: T) {
     const problem = validate(input);
     if (problem) return setStatus({ kind: "error", message: problem });
+    setLastInput(input);
     setStatus({ kind: "loading" });
     try {
       const res = await run(input);
@@ -58,13 +65,18 @@ export function FeatureTool<T>({
       <PageHeader title={title} description={description} />
       <ResponsibleAINotice compact />
       <div className="grid gap-6 lg:grid-cols-2">
-        <form onSubmit={onSubmit} onReset={() => setStatus({ kind: "idle" })} noValidate className="space-y-5 rounded-xl border bg-card p-5 shadow-card md:p-6" aria-busy={loading}>
+        <form onSubmit={onSubmit} onReset={() => { setStatus({ kind: "idle" }); setLastInput(null); }} noValidate className="space-y-5 rounded-xl border bg-card p-5 shadow-card md:p-6" aria-busy={loading}>
           {children}
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Sparkles className="h-4 w-4" aria-hidden />}
               {loading ? "Working…" : submitLabel}
             </Button>
+            {regenerate && lastInput !== null && (
+              <Button type="button" variant="secondary" disabled={loading} onClick={() => void execute(lastInput)} className="w-full sm:w-auto">
+                <RefreshCw className="h-4 w-4" aria-hidden /> Regenerate
+              </Button>
+            )}
             {actions && (
               <Button type="reset" variant="outline" disabled={loading} className="w-full sm:w-auto">
                 <Eraser className="h-4 w-4" aria-hidden /> Clear
@@ -100,7 +112,12 @@ export function FeatureTool<T>({
                 <p>{status.message}</p>
               </div>
             )}
-            {status.kind === "done" && <div className="whitespace-pre-wrap text-sm">{status.text}</div>}
+            {status.kind === "done" && (
+              <>
+                <label htmlFor="output-text" className="sr-only">Editable result</label>
+                <Textarea id="output-text" value={status.text} rows={16} onChange={(e) => setStatus({ kind: "done", text: e.target.value })} className="min-h-[320px] text-sm" />
+              </>
+            )}
           </div>
         </section>
       </div>
