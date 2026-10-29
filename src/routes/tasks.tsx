@@ -19,6 +19,7 @@ export const Route = createFileRoute("/tasks")({
       collect={(f) => ({ goal: str(f, "goal"), deadline: str(f, "deadline"), constraints: str(f, "constraints") })}
       validate={(i) => (!i.goal ? "Please describe the goal you want to plan." : null)}
       run={planTasks}
+      actions
     >
       <AreaField id="goal" label="Goal (required)" rows={3} placeholder="e.g. Launch the new onboarding flow" />
       <TextField id="deadline" label="Deadline" type="date" />
