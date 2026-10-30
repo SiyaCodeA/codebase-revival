@@ -66,7 +66,7 @@ The source code is available through GitHub.
 5. Open the extracted project folder in a suitable code editor to inspect the source code.
 
 **GitHub Repository:**  
-https://github.com/SiyaCodeA/Workplace-AI-Productivity-Assistant
+https://github.com/SiyaCodeA/Workplace-AI-Productivity-Assistant.
 
 ### 4.3 Development Environment
 
