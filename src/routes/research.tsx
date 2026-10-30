@@ -5,15 +5,15 @@ import { researchTopic } from "@/lib/ai/features";
 export const Route = createFileRoute("/research")({
   head: () => ({
     meta: [
-      { title: "AI Research Assistant · AI Workplace Assistant" },
+      { title: "Research Assistant · AI Workplace Assistant" },
       { name: "description", content: "Explore a work question and get a structured overview to verify." },
-      { property: "og:title", content: "AI Research Assistant" },
+      { property: "og:title", content: "Research Assistant" },
       { property: "og:description", content: "Explore a question and get a structured overview." },
     ],
   }),
   component: () => (
     <FeatureTool
-      title="AI Research Assistant"
+      title="Research Assistant"
       description="Ask a question. The assistant will outline key points and considerations. Always verify against trusted sources."
       submitLabel="Research"
       collect={(f) => ({ question: str(f, "question"), depth: str(f, "depth") })}
